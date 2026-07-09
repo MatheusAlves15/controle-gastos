@@ -2,11 +2,10 @@ using ControleGastos.Api.Models;
 
 namespace ControleGastos.Api.DTOs;
 
-// DTO usado para criar uma pessoa.
-// DTO evita receber dados desnecessários do frontend.
+//dto para criar uma pessoa
 public record CriarPessoaDto(string Nome, int Idade);
 
-// DTO usado para criar uma transação.
+//dto usado para criar uma transacao
 public record CriarTransacaoDto(
     string Descricao,
     decimal Valor,
@@ -14,7 +13,7 @@ public record CriarTransacaoDto(
     int PessoaId
 );
 
-// DTO usado para exibir os totais de cada pessoa.
+//dto para exibir os totais de cada pessoa
 public record PessoaTotalDto(
     int PessoaId,
     string Nome,
@@ -23,14 +22,14 @@ public record PessoaTotalDto(
     decimal Saldo
 );
 
-// DTO usado para exibir o total geral do sistema.
+//dto para exibir o total geral do sistema
 public record TotalGeralDto(
     decimal TotalReceitas,
     decimal TotalDespesas,
     decimal SaldoLiquido
 );
 
-// DTO final da consulta de totais.
+//dto final da consulta de totais
 public record TotaisResponseDto(
     List<PessoaTotalDto> Pessoas,
     TotalGeralDto TotalGeral

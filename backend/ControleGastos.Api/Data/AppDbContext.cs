@@ -45,8 +45,8 @@ public class AppDbContext : DbContext
             entity.Property(t => t.Valor)
                 .IsRequired();
 
-            // Salva o enum como texto no banco:
-            // "Despesa" ou "Receita".
+            //salva enum como texto no banco
+            //despesa ou receita
             entity.Property(t => t.Tipo)
                 .HasConversion<string>()
                 .IsRequired();

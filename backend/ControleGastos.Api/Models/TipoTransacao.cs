@@ -1,7 +1,7 @@
 namespace ControleGastos.Api.Models;
 
-// Enum usado para limitar o tipo da transação.
-// Isso evita salvar qualquer texto aleatório no banco.
+//enum para limitar o tipo da transacao
+//para evitar que qualquer texto aleatorio entre no banco
 public enum TipoTransacao
 {
     Despesa = 1,

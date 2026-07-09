@@ -2,18 +2,18 @@ namespace ControleGastos.Api.Models;
 
 public class Transacao
 {
-    // Identificador único gerado automaticamente pelo banco.
+    //identificador unico gerado automaticamente
     public int Id { get; set; }
 
-    // Descrição da transação, exemplo: "Conta de luz".
+    //descrição da transacao
     public string Descricao { get; set; } = string.Empty;
 
-    // Valor da transação.
+    //valor da transacao
     public decimal Valor { get; set; }
 
-    // Tipo da transação: Despesa ou Receita.
+    //tipo da transacao
     public TipoTransacao Tipo { get; set; }
 
-    // Chave estrangeira que liga a transação a uma pessoa.
+    //chave estrangeira que liga transacao a pessoa
     public int PessoaId { get; set; }
 }
