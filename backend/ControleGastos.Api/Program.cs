@@ -6,15 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do banco SQLite.
-// O arquivo gastos.db será criado na pasta do backend.
-// Isso garante persistência dos dados após fechar a aplicação.
+//configuracao do sqlite
+//o arquivo gastos.db sera criado na pasta do backend
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source=gastos.db");
 });
 
-// Configuração para o frontend React conseguir acessar a API.
+//configuracao para o frontend conseguir acessar a api
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactApp", policy =>
@@ -26,8 +25,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Faz o enum TipoTransacao ser enviado/recebido como texto no JSON.
-// Exemplo: "Despesa" ou "Receita".
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -37,22 +34,18 @@ var app = builder.Build();
 
 app.UseCors("ReactApp");
 
-// Cria o banco automaticamente caso ele ainda não exista.
-// Para projeto simples, isso evita precisar rodar migrations.
+//cria o banco caso ele ainda nao exista.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 
-// Endpoint simples para testar se a API está no ar.
+//endpoint para testar se a API esta no ar
 app.MapGet("/", () => "API de Controle de Gastos está funcionando!");
 
-// ============================
-// PESSOAS
-// ============================
 
-// Lista todas as pessoas cadastradas.
+//lista pessoas cadastradas
 app.MapGet("/pessoas", async (AppDbContext db) =>
 {
     var pessoas = await db.Pessoas
@@ -63,7 +56,7 @@ app.MapGet("/pessoas", async (AppDbContext db) =>
     return Results.Ok(pessoas);
 });
 
-// Cria uma nova pessoa.
+//cria nova pessoa
 app.MapPost("/pessoas", async (CriarPessoaDto dto, AppDbContext db) =>
 {
     if (string.IsNullOrWhiteSpace(dto.Nome))
@@ -84,8 +77,7 @@ app.MapPost("/pessoas", async (CriarPessoaDto dto, AppDbContext db) =>
     return Results.Created($"/pessoas/{pessoa.Id}", pessoa);
 });
 
-// Deleta uma pessoa.
-// Pela configuração do AppDbContext, as transações dela também são deletadas.
+//deleta pessoa e transacoes vinculadas
 app.MapDelete("/pessoas/{id:int}", async (int id, AppDbContext db) =>
 {
     var pessoa = await db.Pessoas.FindAsync(id);
@@ -99,12 +91,8 @@ app.MapDelete("/pessoas/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 });
 
-// ============================
-// TRANSAÇÕES
-// ============================
 
-// Lista todas as transações cadastradas.
-// Também retorna o nome da pessoa para facilitar a exibição no frontend.
+//lista todas as transacoes cadastradas
 app.MapGet("/transacoes", async (AppDbContext db) =>
 {
     var transacoes = await db.Transacoes
@@ -129,7 +117,7 @@ app.MapGet("/transacoes", async (AppDbContext db) =>
     return Results.Ok(transacoes);
 });
 
-// Cria uma nova transação.
+//cria uma nova transacao
 app.MapPost("/transacoes", async (CriarTransacaoDto dto, AppDbContext db) =>
 {
     if (string.IsNullOrWhiteSpace(dto.Descricao))
@@ -143,8 +131,7 @@ app.MapPost("/transacoes", async (CriarTransacaoDto dto, AppDbContext db) =>
     if (pessoa is null)
         return Results.BadRequest("A pessoa informada não existe");
 
-    // Regra de negócio:
-    // pessoas menores de idade só podem ter despesas cadastradas.
+    //pessoas menores de idade so podem ter despesas
     if (pessoa.Idade < 18 && dto.Tipo == TipoTransacao.Receita)
         return Results.BadRequest("Menores de idade só podem ter despesas cadastradas");
 
@@ -161,10 +148,6 @@ app.MapPost("/transacoes", async (CriarTransacaoDto dto, AppDbContext db) =>
 
     return Results.Created($"/transacoes/{transacao.Id}", transacao);
 });
-
-// ============================
-// TOTAIS
-// ============================
 
 //consulta os totais por pessoa e geral
 app.MapGet("/totais", async (AppDbContext db) =>
@@ -212,5 +195,5 @@ app.MapGet("/totais", async (AppDbContext db) =>
     return Results.Ok(resposta);
 });
 
-// API rodando em porta fixa para facilitar o uso no React.
+//api rodando em porta fixa para facilitar o uso
 app.Run("http://localhost:5000");
